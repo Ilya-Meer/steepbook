@@ -1,0 +1,195 @@
+/* Merriweather Sans */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans:wght@400..800&display=swap');
+
+:root {
+  --primary-color: #831904;
+  --primary-color-light: #a32a10;
+
+  --secondary-color: #faf8f4;
+  --white: #ffffff;
+
+  --grey-accent: #ccc;
+
+  --success: #d4edda;
+  --success-dark: #155724;
+
+  --danger: #f8d7da;
+  --danger-dark: #721c24;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--secondary-color);
+  font-family: 'Merriweather Sans', sans-serif;
+}
+
+body {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' style='opacity:0.02'><text x='50%' y='50%' fill='%23831904' dominant-baseline='middle' text-anchor='middle' font-size='80'>记</text></svg>");
+  background-repeat: no-repeat;
+  background-position: top right;
+  background-size: 80%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--primary-color);
+}
+
+button {
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: 1px solid transparent;
+  padding: 0.5rem 1rem;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+button:hover {
+  background-color: var(--primary-color-light);
+}
+
+input[type="text"],
+input[type="datetime-local"],
+textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--grey-accent);
+  border-radius: 4px;
+  margin-top: 0.25rem;
+  background-color: transparent;
+}
+
+header,
+main {
+  max-width: 46rem;
+  margin: 0 auto;
+}
+
+header {
+  padding: 2rem 2rem 0;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.message.success {
+  color: var(--success-dark);
+  background-color: var(--success);
+}
+
+.message.failure {
+  color: var(--danger-dark);
+  background-color: var(--danger);
+}
+
+.message {
+  position: fixed;
+  top: 15px;
+  transform: translateX(-50%);
+  left: 50%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.hidden {
+  display: none;
+}
+
+.secondary-button {
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  border: 1px solid var(--primary-color);
+}
+
+.secondary-button:hover {
+  background-color: var(--white);
+}
+
+.session-list {
+  margin-top: 1rem;
+}
+
+.session-form h2 {
+  margin-bottom: 1rem;
+}
+
+.session-form label {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.steeps-section .steep-header,
+.custom-fields-section .custom-fields-header {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.steep-field,
+.custom-field {
+  margin-bottom: 0.5rem;
+}
+
+.steep-label-header,
+.custom-field-label-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.steep-label-header label,
+.custom-field-label-header label {
+  margin: 0;
+}
+
+.remove-steep-btn {
+  margin: 0;
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.remove-steep-btn:hover {
+  color: var(--primary-color-light);
+  background-color: transparent;
+}
+
+.form-actions {
+  margin: 2rem 0;
+}
+
+.form-actions button.reset-session {
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  border: 1px solid var(--primary-color);
+}
+
+.form-actions button.reset-session:hover {
+  background-color: var(--white);
+}
+
+button.edit-session-btn {
+  margin: 0 1rem;
+}
+
+.past-sessions,
+.export {
+  border-top: 1px solid var(--grey-accent);
+  padding-top: 0.5rem;
+}

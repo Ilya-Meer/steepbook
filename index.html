@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Steepbook</title>
+</head>
+<body>
+  <header>
+    <h1>Steepbook</h1>
+  </header>
+  <main>
+    <div id="message-container">
+      <div id="success-message-container" class="message success hidden">
+        <p>Session saved successfully!</p>
+      </div>
+      <div id="failure-message-container" class="message failure hidden">
+        <p>Failed to save session. Please try again.</p>
+      </div>
+    </div>
+    <div id="session-form" class="session-form">
+      <form id="new-session-form">
+        <h2>New Session</h2>
+        <label>
+          Date & Time:
+          <input type="datetime-local" name="datetime" required />
+        </label>
+        <label>
+          Brewing Vessel:
+          <input type="text" name="brewingVessel" />
+        </label>
+        <label>
+          Name:
+          <input type="text" name="teaName" required placeholder="e.g. 7542" />
+        </label>
+        <label>
+          Brand:
+          <input type="text" name="teaBrand" placeholder="e.g. Dayi" required />
+        </label>
+        <label>
+          Purchase Location:
+          <input type="text" name="purchaseLocation" />
+        </label>
+        <label>
+          Dry Leaf Notes:
+          <textarea name="dryLeaf"></textarea>
+        </label>
+        <label>
+          Wet Leaf Notes:
+          <textarea name="wetLeaf"></textarea>
+        </label>
+        <label id="additional-notes">
+          Additional Notes:
+          <textarea name="additionalNotes"></textarea>
+        </label>
+        <div class="steeps-section">
+          <div class="steep-header">
+            <h3>Steeps</h3>
+            <button aria-label="add steep" type="button" id="add-steep">
+              +
+            </button>
+          </div>
+          <div id="steeps">
+            <label>Steep 1:
+              <textarea name="steep-1"></textarea>
+            </label>
+          </div>
+        </div>
+
+        <div class="custom-fields-section">
+          <div class="custom-fields-header">
+            <h3>Custom Fields</h3>
+            <button aria-label="add custom field" type="button" id="add-custom-field">
+              +
+            </button>
+          </div>
+          <div id="custom-fields">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit">Save Session</button>
+          <button type="button" id="reset-session" class="reset-session secondary-button">
+            Reset
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="past-sessions">
+      <h2>Past Sessions</h2>
+      <div id="session-list" class="session-list"></div>
+    </div>
+    <div class="export">
+      <h2>Export</h2>
+      <button>CSV</button>
+      <button>JSON</button>
+    </div>
+  </main>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
