@@ -5,6 +5,16 @@ const {
   failureMessageContainer,
 } = refs
 
+export const messages = {
+  SESSION_SAVE_SUCCESS: 'Session saved successfully!',
+  SESSION_UPDATE_SUCCESS: 'Session updated successfully!',
+  SESSION_SAVE_ERROR: 'Error saving session',
+
+  DELETE_SESSION_CONFIRM: 'Are you sure you want to delete this session?',
+
+  LOCAL_STORAGE_LOAD_ERROR: 'Error loading sessions from local storage.',
+}
+
 export function displaySuccessMessage(message: string) {
   successMessageContainer.textContent = message
   successMessageContainer.classList.remove('hidden')

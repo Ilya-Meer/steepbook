@@ -3,11 +3,16 @@ import './css/style.css'
 import { refs } from './refs'
 import { addSteepField } from './steep'
 import { addCustomField } from './custom-field'
+import { state } from './state'
+import { loadFromLocalStorage } from './transport/local-storage'
+
 import {
   saveSession,
   resetSessionForm,
-  setDefaultDateTime
+  setDefaultDateTime,
+  renderSessions
 } from './session'
+import { displayFailureMessage } from './notification'
 
 const {
   form,
@@ -22,6 +27,19 @@ const {
 init()
 
 function init() {
+  // hydrate past session list with stored sessions
+  const {
+    sessions,
+    error
+  } = loadFromLocalStorage()
+
+  if (typeof error === 'string') {
+    displayFailureMessage(error)
+  }
+
+  state.sessions = sessions || []
+  renderSessions()
+
   steepsDiv.innerHTML = ''
   addSteepField('') // start with one steep field
   setDefaultDateTime()

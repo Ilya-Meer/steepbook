@@ -5,10 +5,14 @@ import {
   isTextArea
 } from './util'
 import { type Session } from './types'
-import { displaySuccessMessage } from './notification'
+import {
+  displaySuccessMessage,
+  messages
+} from './notification'
 import { addSteepField } from './steep'
 import { addCustomField } from './custom-field'
 import { toLocalDatetimeString } from './util'
+import { saveToLocalStorage } from './transport/local-storage'
 
 const {
   form,
@@ -59,10 +63,12 @@ export function saveSession(e: SubmitEvent) {
     form.querySelector('button[type="submit"]').textContent = 'Done'
     resetBtn.textContent = 'Reset'
 
-    displaySuccessMessage('Session updated successfully!')
+    saveToLocalStorage(state.sessions)
+    displaySuccessMessage(messages.SESSION_UPDATE_SUCCESS)
   } else {
     state.sessions.push(session)
-    displaySuccessMessage('Session saved successfully!')
+    saveToLocalStorage(state.sessions)
+    displaySuccessMessage(messages.SESSION_SAVE_SUCCESS)
   }
 
   resetSessionForm()
@@ -104,88 +110,7 @@ export function setDefaultDateTime() {
   input.value = toLocalDatetimeString(now)
 }
 
-function startEditSession(index: number) {
-  const session = state.sessions[index]
-  state.editingIndex = index
-
-  const fields = [
-    [
-      'datetime',
-      session.datetime
-    ],
-    [
-      'teaName',
-      session.teaName
-    ],
-    [
-      'teaProducer',
-      session.teaProducer
-    ],
-    [
-      'origin',
-      session.origin
-    ],
-    [
-      'purchaseLocation',
-      session.purchaseLocation
-    ],
-    [
-      'dryLeaf',
-      session.dryLeaf
-    ],
-    [
-      'wetLeaf',
-      session.wetLeaf
-    ],
-  ] as const
-
-  for (const [
-    name,
-    value
-  ] of fields) {
-    const el = form.elements.namedItem(name)
-    if (isInput(el) || isTextArea(el)) {
-      el.value = value
-    } else {
-      console.warn(`Expected input element for '${name}', but got:`, el)
-    }
-  }
-
-  // Clear steeps
-  steepsDiv.innerHTML = ''
-  session.steeps.forEach((text) => {
-    addSteepField(text)
-  })
-
-  // Clear and add custom fields
-  customFieldsContainer.innerHTML = ''
-  session.customFields?.forEach(({
-    name,
-    value
-  }) => {
-    const labelName = name.replace(/^custom-/, '').replace(/-/g, ' ')
-    addCustomField(labelName, value)
-  })
-
-  // Update form UI
-  form.querySelector('button[type="submit"]').textContent = 'Update Session'
-  resetBtn.textContent = 'Cancel'
-
-  scrollTo({
-    top: 0,
-    left: 0,
-    behavior: 'smooth'
-  })
-}
-
-function deleteSession(index: number) {
-  if (confirm('Are you sure you want to delete this session?')) {
-    state.sessions.splice(index, 1)
-    renderSessions()
-  }
-}
-
-function renderSessions() {
+export function renderSessions() {
   sessionList.innerHTML = ''
 
   state.sessions.forEach((sesh, index) => {
@@ -336,4 +261,85 @@ function renderSessionCard(session: Session, index: number) {
   div.appendChild(sessionCard)
 
   return div
+}
+
+function startEditSession(index: number) {
+  const session = state.sessions[index]
+  state.editingIndex = index
+
+  const fields = [
+    [
+      'datetime',
+      session.datetime
+    ],
+    [
+      'teaName',
+      session.teaName
+    ],
+    [
+      'teaProducer',
+      session.teaProducer
+    ],
+    [
+      'origin',
+      session.origin
+    ],
+    [
+      'purchaseLocation',
+      session.purchaseLocation
+    ],
+    [
+      'dryLeaf',
+      session.dryLeaf
+    ],
+    [
+      'wetLeaf',
+      session.wetLeaf
+    ],
+  ] as const
+
+  for (const [
+    name,
+    value
+  ] of fields) {
+    const el = form.elements.namedItem(name)
+    if (isInput(el) || isTextArea(el)) {
+      el.value = value
+    } else {
+      console.warn(`Expected input element for '${name}', but got:`, el)
+    }
+  }
+
+  // Clear steeps
+  steepsDiv.innerHTML = ''
+  session.steeps.forEach((text) => {
+    addSteepField(text)
+  })
+
+  // Clear and add custom fields
+  customFieldsContainer.innerHTML = ''
+  session.customFields?.forEach(({
+    name,
+    value
+  }) => {
+    const labelName = name.replace(/^custom-/, '').replace(/-/g, ' ')
+    addCustomField(labelName, value)
+  })
+
+  // Update form UI
+  form.querySelector('button[type="submit"]').textContent = 'Update Session'
+  resetBtn.textContent = 'Cancel'
+
+  scrollTo({
+    top: 0,
+    left: 0,
+    behavior: 'smooth'
+  })
+}
+
+function deleteSession(index: number) {
+  if (confirm(messages.DELETE_SESSION_CONFIRM)) {
+    state.sessions.splice(index, 1)
+    renderSessions()
+  }
 }
