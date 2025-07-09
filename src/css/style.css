@@ -114,6 +114,10 @@ main {
   text-decoration: underline;
 }
 
+.required {
+  color: var(--danger-dark);
+}
+
 .message.success {
   color: var(--success-dark);
   background-color: var(--success);
@@ -136,7 +140,6 @@ main {
 .hidden {
   display: none;
 }
-
 
 .session-list {
   margin-top: 1rem;
@@ -187,6 +190,7 @@ main {
 }
 
 .session-summary {
+  margin-bottom: 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;

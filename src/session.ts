@@ -25,7 +25,8 @@ export function saveSession(e: SubmitEvent) {
     datetime: formData.get('datetime') as string,
     brewingVessel: formData.get('brewingVessel') as string,
     teaName: formData.get('teaName') as string,
-    teaBrand: formData.get('teaBrand') as string,
+    teaProducer: formData.get('teaProducer') as string,
+    origin: formData.get('origin') as string,
     purchaseLocation: formData.get('purchaseLocation') as string,
     dryLeaf: formData.get('dryLeaf') as string,
     wetLeaf: formData.get('wetLeaf') as string,
@@ -117,8 +118,12 @@ function startEditSession(index: number) {
       session.teaName
     ],
     [
-      'teaBrand',
-      session.teaBrand
+      'teaProducer',
+      session.teaProducer
+    ],
+    [
+      'origin',
+      session.origin
     ],
     [
       'purchaseLocation',
@@ -205,11 +210,11 @@ function renderSessionCard(session: Session, index: number) {
 
   const sessionSummaryDate = document.createElement('span')
   sessionSummaryDate.className = 'session-date'
-  sessionSummaryDate.textContent = session.datetime.split('T')[0] + ' – '
+  sessionSummaryDate.textContent = (session.datetime.split('T')[0]).replace(new RegExp(/-/g), '/') + ' – '
 
-  const sessionSummaryTeaBrand = document.createElement('span')
-  sessionSummaryTeaBrand.className = 'session-brand'
-  sessionSummaryTeaBrand.textContent = session.teaBrand + ' – '
+  const sessionSummaryTeaProducer = document.createElement('span')
+  sessionSummaryTeaProducer.className = 'session-producer'
+  sessionSummaryTeaProducer.textContent = session.teaProducer ? session.teaProducer + ' – ' : ''
 
   const sessionSummaryTeaName = document.createElement('span')
   sessionSummaryTeaName.className = 'session-name'
@@ -226,7 +231,7 @@ function renderSessionCard(session: Session, index: number) {
   })
 
   sessionSummaryHeader.appendChild(sessionSummaryDate)
-  sessionSummaryHeader.appendChild(sessionSummaryTeaBrand)
+  sessionSummaryHeader.appendChild(sessionSummaryTeaProducer)
   sessionSummaryHeader.appendChild(sessionSummaryTeaName)
 
   sessionSummary.appendChild(sessionSummaryHeader)
@@ -240,7 +245,10 @@ function renderSessionCard(session: Session, index: number) {
 
   const sessionDateTime = document.createElement('p')
   const dateTime = new Date(session.datetime)
-  const formattedDateTime = `${dateTime.getFullYear()}-${(dateTime.getMonth() + 1).toString().padStart(2, '0')}-${dateTime.getDate().toString().padStart(2, '0')} @ ${dateTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`
+  const formattedDateTime = `${dateTime.getFullYear()}-${(dateTime.getMonth() + 1).toString().padStart(2, '0')}-${dateTime.getDate().toString().padStart(2, '0')} @ ${dateTime.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit'
+  })}`
   sessionDateTime.innerHTML = `<strong>Date & Time:</strong> ${formattedDateTime}`
 
   const brewingVessel = document.createElement('p')
@@ -249,8 +257,11 @@ function renderSessionCard(session: Session, index: number) {
   const teaName = document.createElement('p')
   teaName.innerHTML = `<strong>Tea Name:</strong> ${session.teaName}`
 
-  const brand = document.createElement('p')
-  brand.innerHTML = `<strong>Brand:</strong> ${session.teaBrand}`
+  const producer = document.createElement('p')
+  producer.innerHTML = `<strong>Producer:</strong> ${session.teaProducer}`
+
+  const origin = document.createElement('p')
+  origin.innerHTML = `<strong>Origin:</strong> ${session.origin}`
 
   const purchaseLocation = document.createElement('p')
   purchaseLocation.innerHTML = `<strong>Purchase Location:</strong> ${session.purchaseLocation}`
@@ -309,7 +320,8 @@ function renderSessionCard(session: Session, index: number) {
 
   sessionDetails.appendChild(sessionDateTime)
   sessionDetails.appendChild(teaName)
-  sessionDetails.appendChild(brand)
+  sessionDetails.appendChild(producer)
+  sessionDetails.appendChild(origin)
   sessionDetails.appendChild(purchaseLocation)
   sessionDetails.appendChild(brewingVessel)
   sessionDetails.appendChild(dryLeaf)

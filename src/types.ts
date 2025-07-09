@@ -6,7 +6,8 @@ export interface Session {
   datetime: string
   brewingVessel: string
   teaName: string
-  teaBrand: string
+  teaProducer: string
+  origin: string
   purchaseLocation: string
   dryLeaf: string
   wetLeaf: string

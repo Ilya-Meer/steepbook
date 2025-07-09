@@ -22,16 +22,20 @@
       <form id="new-session-form">
         <h2>New Session</h2>
         <label>
-          Date & Time:
+          Date & Time:<span class="required">*</span>
           <input type="datetime-local" name="datetime" required />
         </label>
         <label>
-          Name:
+          Name:<span class="required">*</span>
           <input type="text" name="teaName" required placeholder="e.g. 7542" />
         </label>
         <label>
-          Brand:
-          <input type="text" name="teaBrand" placeholder="e.g. Dayi" required />
+          Producer:
+          <input type="text" name="teaProducer" placeholder="e.g. Dayi" />
+        </label>
+        <label>
+          Origin:
+          <input type="text" name="origin" />
         </label>
         <label>
           Purchase Location:
