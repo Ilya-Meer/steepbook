@@ -4,7 +4,10 @@ import { refs } from './refs'
 import { addSteepField } from './steep'
 import { addCustomField } from './custom-field'
 import { state } from './state'
-import { loadFromLocalStorage } from './transport/local-storage'
+import {
+  loadFromLocalStorage,
+  exportToJSON
+} from './transport'
 
 import {
   saveSession,
@@ -21,7 +24,9 @@ const {
   steepsDiv,
   addSteepBtn,
 
-  addCustomFieldBtn
+  addCustomFieldBtn,
+
+  jsonExportButton
 } = refs
 
 init()
@@ -50,4 +55,6 @@ function init() {
   form.addEventListener('submit', saveSession)
 
   resetBtn.addEventListener('click', resetSessionForm)
+
+  jsonExportButton.addEventListener('click', exportToJSON)
 }

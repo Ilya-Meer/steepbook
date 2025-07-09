@@ -13,7 +13,13 @@ export const messages = {
   DELETE_SESSION_CONFIRM: 'Are you sure you want to delete this session?',
 
   LOCAL_STORAGE_LOAD_ERROR: 'Error loading sessions from local storage.',
-}
+
+  JSON_EXPORT_SUCCESS: 'Sessions exported successfully!',
+  JSON_IMPORT_SUCCESS: 'Sessions imported successfully!',
+
+  JSON_EXPORT_ERROR: 'Error exporting sessions to JSON.',
+  JSON_IMPORT_ERROR: 'Error importing sessions from JSON.',
+} as const
 
 export function displaySuccessMessage(message: string) {
   successMessageContainer.textContent = message

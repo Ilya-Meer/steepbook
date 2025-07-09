@@ -189,8 +189,12 @@ main {
   padding-top: 0.5rem;
 }
 
+.session-card {
+  margin-bottom: 1.5rem;
+}
+
 .session-summary {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;

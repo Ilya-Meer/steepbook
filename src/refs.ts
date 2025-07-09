@@ -14,5 +14,8 @@ export const refs = {
   additionalNotes: document.getElementById('additional-notes'),
 
   successMessageContainer: document.getElementById('success-message-container'),
-  failureMessageContainer: document.getElementById('failure-message-container')
+  failureMessageContainer: document.getElementById('failure-message-container'),
+
+  csvExportButton: document.getElementById('csv-export-button'),
+  jsonExportButton: document.getElementById('json-export-button')
 }
