@@ -28,7 +28,7 @@ export function addSteepField(initialValue = '') {
   const removeBtn = document.createElement('button')
   removeBtn.type = 'button'
   removeBtn.textContent = '✕'
-  removeBtn.className = 'remove-steep-btn'
+  removeBtn.className = 'remove-steep-btn button-slim'
   removeBtn.title = 'Remove this steep'
   removeBtn.ariaLabel = 'Remove this steep'
 

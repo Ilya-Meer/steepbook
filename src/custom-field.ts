@@ -23,7 +23,7 @@ export function addCustomField(labelName: string | null = null, initialValue = '
   const removeBtn = document.createElement('button')
   removeBtn.type = 'button'
   removeBtn.textContent = '✕'
-  removeBtn.className = 'remove-steep-btn'
+  removeBtn.className = 'remove-steep-btn button-slim'
   removeBtn.title = 'Remove this field'
   removeBtn.ariaLabel = 'Remove this field'
 

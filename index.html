@@ -26,10 +26,6 @@
           <input type="datetime-local" name="datetime" required />
         </label>
         <label>
-          Brewing Vessel:
-          <input type="text" name="brewingVessel" />
-        </label>
-        <label>
           Name:
           <input type="text" name="teaName" required placeholder="e.g. 7542" />
         </label>
@@ -40,6 +36,10 @@
         <label>
           Purchase Location:
           <input type="text" name="purchaseLocation" />
+        </label>
+        <label>
+          Brewing Vessel:
+          <input type="text" name="brewingVessel" />
         </label>
         <label>
           Dry Leaf Notes:
@@ -56,7 +56,7 @@
         <div class="steeps-section">
           <div class="steep-header">
             <h3>Steeps</h3>
-            <button aria-label="add steep" type="button" id="add-steep">
+            <button aria-label="add steep" type="button" id="add-steep" class="button-primary">
               +
             </button>
           </div>
@@ -70,7 +70,7 @@
         <div class="custom-fields-section">
           <div class="custom-fields-header">
             <h3>Custom Fields</h3>
-            <button aria-label="add custom field" type="button" id="add-custom-field">
+            <button aria-label="add custom field" type="button" id="add-custom-field" class="button-primary">
               +
             </button>
           </div>
@@ -78,8 +78,8 @@
           </div>
         </div>
         <div class="form-actions">
-          <button type="submit">Save Session</button>
-          <button type="button" id="reset-session" class="reset-session secondary-button">
+          <button type="submit" class="button-primary">Save Session</button>
+          <button type="button" id="reset-session" class="reset-session button-secondary">
             Reset
           </button>
         </div>
@@ -92,8 +92,8 @@
     </div>
     <div class="export">
       <h2>Export</h2>
-      <button>CSV</button>
-      <button>JSON</button>
+      <button class="button-primary">CSV</button>
+      <button class="button-primary">JSON</button>
     </div>
   </main>
   <script type="module" src="/src/main.ts"></script>
