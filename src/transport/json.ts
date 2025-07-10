@@ -1,6 +1,7 @@
 import { messages } from '../notification.ts'
 import { state } from '../state'
 import type { Session } from '../types'
+import { downloadFile } from '../util.ts'
 
 export function exportToJSON(): typeof messages['JSON_EXPORT_ERROR'] | undefined {
   try {
@@ -11,7 +12,11 @@ export function exportToJSON(): typeof messages['JSON_EXPORT_ERROR'] | undefined
     }))
 
     const serializedSessions = JSON.stringify(clonedSessions, null, 2)
-    downloadJSON(serializedSessions)
+    downloadFile({
+      content: serializedSessions,
+      filename: 'steepbook_sessions.json',
+      type: 'json',
+    })
   } catch (error) {
     console.error('Error exporting to JSON:', error)
     return messages.JSON_EXPORT_ERROR
@@ -30,16 +35,3 @@ export function importFromJSON(): {
   }
 }
 
-function downloadJSON(serializedSessions: string, filename = 'steepbook_sessions.json') {
-  const blob = new Blob([serializedSessions], { type: 'application/json' })
-  const url = URL.createObjectURL(blob)
-
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-
-  URL.revokeObjectURL(url) // Release memory
-}

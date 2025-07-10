@@ -1,6 +1,7 @@
 import { messages } from '../notification.ts'
 import { state } from '../state'
 import { type Session } from '../types'
+import { downloadFile } from '../util.ts'
 
 export function exportToCSV(): typeof messages['CSV_EXPORT_ERROR'] | undefined {
   try {
@@ -45,31 +46,21 @@ export function exportToCSV(): typeof messages['CSV_EXPORT_ERROR'] | undefined {
         session.dryLeaf,
         session.wetLeaf,
         session.additionalNotes,
-        ...session.steeps,
+        ...Array.from({ length: maxSteeps }, (_, i) => session.steeps[i] || ''),
         ...generateCustomFieldsValuesForSession(session)
       ]
     })
 
-    downloadCSV([
-      headerRow,
-      ...rows
-    ].map(row => row.join(',')).join('\n'))
+    downloadFile({
+      content: [
+        headerRow,
+        ...rows
+      ].map(row => row.join(',')).join('\n'),
+      filename: 'steepbook_sessions.csv',
+      type: 'csv',
+    })
   } catch (error) {
     console.error('Error exporting to CSV:', error)
     return messages.CSV_EXPORT_ERROR
   }
-}
-
-function downloadCSV(serializedSessions: string, filename = 'steepbook_sessions.csv') {
-  const blob = new Blob([serializedSessions], { type: 'text/csv' })
-  const url = URL.createObjectURL(blob)
-
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-
-  URL.revokeObjectURL(url) // Release memory
 }

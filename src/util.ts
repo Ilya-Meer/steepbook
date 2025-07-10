@@ -17,3 +17,29 @@ export function isInput(el: HTMLElement | null): el is HTMLInputElement {
 export function isTextArea(el: HTMLElement | null): el is HTMLTextAreaElement {
   return el instanceof HTMLTextAreaElement
 }
+
+export function downloadFile({
+  content,
+  filename,
+  type
+}: {
+  content: string,
+  filename: string,
+  type: 'csv' | 'json'
+}) {
+  const mimeTypes = {
+    csv: 'text/csv',
+    json: 'application/json'
+  }
+  const blob = new Blob([content], { type: mimeTypes[type] })
+  const url = URL.createObjectURL(blob)
+
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+
+  URL.revokeObjectURL(url) // Release memory
+}
