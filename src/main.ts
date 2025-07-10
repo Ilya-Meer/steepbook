@@ -6,7 +6,8 @@ import { addCustomField } from './custom-field'
 import { state } from './state'
 import {
   loadFromLocalStorage,
-  exportToJSON
+  exportToJSON,
+  exportToCSV
 } from './transport'
 
 import {
@@ -26,7 +27,8 @@ const {
 
   addCustomFieldBtn,
 
-  jsonExportButton
+  jsonExportButton,
+  csvExportButton,
 } = refs
 
 init()
@@ -57,4 +59,5 @@ function init() {
   resetBtn.addEventListener('click', resetSessionForm)
 
   jsonExportButton.addEventListener('click', exportToJSON)
+  csvExportButton.addEventListener('click', exportToCSV)
 }

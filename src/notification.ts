@@ -14,11 +14,13 @@ export const messages = {
 
   LOCAL_STORAGE_LOAD_ERROR: 'Error loading sessions from local storage.',
 
-  JSON_EXPORT_SUCCESS: 'Sessions exported successfully!',
-  JSON_IMPORT_SUCCESS: 'Sessions imported successfully!',
+  SESSION_IMPORT_SUCCESS: 'Sessions imported successfully!',
 
   JSON_EXPORT_ERROR: 'Error exporting sessions to JSON.',
   JSON_IMPORT_ERROR: 'Error importing sessions from JSON.',
+
+  CSV_EXPORT_ERROR: 'Error exporting sessions to CSV.',
+  CSV_IMPORT_ERROR: 'Error importing sessions from CSV.',
 } as const
 
 export function displaySuccessMessage(message: string) {
