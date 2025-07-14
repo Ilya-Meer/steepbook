@@ -1,3 +1,4 @@
+import Papa from 'papaparse'
 import {
   expect,
   it,
@@ -7,10 +8,18 @@ import {
 } from 'vitest'
 import type { Session } from '../types'
 import { downloadFile } from '../util'
-import { exportToCSV } from './csv'
+import {
+  exportToCSV, importFromCSV
+} from './csv'
 
 vi.mock('../util', () => ({ downloadFile: vi.fn() }))
-vi.mock('../notification', () => ({}))
+vi.mock('../notification', () => ({
+  messages: {
+    CSV_IMPORT_ERROR: 'CSV_IMPORT_ERROR',
+    CSV_IMPORT_ERROR_PARTIAL: 'CSV_IMPORT_ERROR_PARTIAL',
+    CSV_EXPORT_ERROR: 'CSV_EXPORT_ERROR',
+  }
+}))
 vi.mock('../state', () => ({
   state: {
     sessions: []
@@ -18,6 +27,7 @@ vi.mock('../state', () => ({
 }))
 
 import { state } from '../state'
+import { messages } from '../notification'
 
 describe('Export to CSV', () => {
   beforeEach(() => {
@@ -106,9 +116,13 @@ describe('Export to CSV', () => {
 
     // Parse the CSV content to verify structure
     const csvContent = callArgs.content
-    const lines = csvContent.split('\n')
-    const headerRow = lines[0].split(',')
-    const dataRows = lines.slice(1).map(line => line.split(','))
+
+    const parseResult = Papa.parse<string[]>(csvContent, { skipEmptyLines: true })
+
+    const [
+      headerRow,
+      ...dataRows
+    ] = parseResult.data
 
     // Verify header includes standard fields
     expect(headerRow).toContain('datetime')
@@ -229,7 +243,211 @@ describe('Export to CSV', () => {
 })
 
 describe('Import from CSV', () => {
-  it.skip('adds 1 + 2 to equal 3', () => {
-    expect(1 + 2).toBe(3)
+  it('imports well-formatted sessions from CSV', () => {
+    // Create mock sessions data
+    const mockSessions: Session[] = [
+      {
+        datetime: '2024-01-01T10:00',
+        brewingVessel: 'Gaiwan',
+        teaName: '7542',
+        teaProducer: 'Dayi',
+        origin: 'Menghai Yunnan',
+        purchaseLocation: 'Local Tea Shop',
+        dryLeaf: 'Dark brown, slightly sweet aroma',
+        wetLeaf: 'Leather and tobacco',
+        additionalNotes: 'Very refreshing',
+        steeps: [
+          'Wash',
+          'Fruity',
+          'Floral',
+        ],
+        customFields: [
+          {
+            name: 'custom-water-temperature',
+            value: '100'
+          },
+          {
+            name: 'custom-rating',
+            value: '9/10'
+          }
+        ]
+      },
+      {
+        datetime: '2024-01-02T14:30',
+        brewingVessel: 'Yixing Zisha Zhuni Shuiping 100ml',
+        teaName: 'N/A',
+        teaProducer: 'XiaGuan',
+        origin: 'Menghai - Yunnan',
+        purchaseLocation: 'Essence of Tea',
+        dryLeaf: 'Dark twisted leaves',
+        wetLeaf: 'Dark brown',
+        additionalNotes: 'Too smoky?',
+        steeps: [
+          'some value here',
+          'another value here'
+        ],
+        customFields: [
+          {
+            name: 'custom-water-temperature',
+            value: '100°C'
+          },
+          {
+            name: 'custom-rating',
+            value: '8/10'
+          },
+          {
+            name: 'custom-tea-pet',
+            value: 'Lord GuanYu'
+          }
+        ]
+      }
+    ]
+
+    // Create CSV string that matches the expected format
+    const csvHeader = 'datetime,brewingVessel,teaName,teaProducer,origin,purchaseLocation,dryLeaf,wetLeaf,additionalNotes,steep-1,steep-2,steep-3,custom-water-temperature,custom-rating,custom-tea-pet'
+    const csvRow1 = '2024-01-01T10:00,Gaiwan,7542,Dayi,Menghai Yunnan,Local Tea Shop,"Dark brown, slightly sweet aroma",Leather and tobacco,Very refreshing,Wash,Fruity,Floral,100,9/10,'
+    const csvRow2 = '2024-01-02T14:30,Yixing Zisha Zhuni Shuiping 100ml,N/A,XiaGuan,Menghai - Yunnan,Essence of Tea,Dark twisted leaves,Dark brown,Too smoky?,some value here,another value here,,100°C,8/10,Lord GuanYu'
+    const mockCSV = `${csvHeader}\n${csvRow1}\n${csvRow2}`
+
+    const result = importFromCSV(mockCSV)
+
+    // Expected result should filter out empty steeps and custom fields
+    const expectedSessions = mockSessions.map(session => ({
+      ...session,
+      steeps: session.steeps.filter(steep => steep.length > 0),
+      customFields: session.customFields.filter(field => field.value.length > 0)
+    }))
+
+    expect(result.sessions).toEqual(expectedSessions)
+    expect(result.error).toBeUndefined()
+  })
+
+  it('does not import sessions with invalid datetime', () => {
+    const header = 'datetime,brewingVessel,teaName,teaProducer,origin,purchaseLocation,dryLeaf,wetLeaf,additionalNotes'
+    const data = 'not-a-date,Gaiwan,Test Tea,Test Producer,Test Origin,Test Location,Test dry leaf notes,Test wet leaf notes,Test notes'
+    const csvContent = `${header}\n${data}`
+
+    const result = importFromCSV(csvContent)
+
+    expect(result.sessions).toBeUndefined()
+    expect(result.error).toBe(messages.CSV_IMPORT_ERROR)
+  })
+
+  it('keeps sessions with valid datetime', () => {
+    const validSessionCSV = '2024-01-01T10:00,Gaiwan,Test Tea,Test Producer,Test Origin,Test Location,Test dry leaf notes,Test wet leaf notes,Test notes'
+    const invalidSessionCSV = 'not-a-date,Gaiwan,Test Tea,Test Producer,Test Origin,Test Location,,,'
+
+    const csvContent = `datetime,brewingVessel,teaName,teaProducer,origin,purchaseLocation,dryLeaf,wetLeaf,additionalNotes\n${validSessionCSV}\n${invalidSessionCSV}`
+
+    const result = importFromCSV(csvContent)
+
+    const expectedValidSession: Session = {
+      datetime: '2024-01-01T10:00',
+      brewingVessel: 'Gaiwan',
+      teaName: 'Test Tea',
+      teaProducer: 'Test Producer',
+      origin: 'Test Origin',
+      purchaseLocation: 'Test Location',
+      dryLeaf: 'Test dry leaf notes',
+      wetLeaf: 'Test wet leaf notes',
+      additionalNotes: 'Test notes',
+      steeps: [],
+      customFields: []
+    }
+
+    expect(result.sessions).toEqual([expectedValidSession])
+    expect(result.error).toEqual(messages.CSV_IMPORT_ERROR_PARTIAL)
+  })
+
+  it('handles empty CSV content', () => {
+    const result = importFromCSV('')
+
+    expect(result.sessions).toBeUndefined()
+    expect(result.error).toBe(messages.CSV_IMPORT_ERROR)
+  })
+
+  it('handles CSV with missing required headers', () => {
+    const csvContent = 'brewingVessel,teaProducer,origin\nGaiwan,Test Producer,Test Origin'
+
+    const result = importFromCSV(csvContent)
+
+    expect(result.sessions).toBeUndefined()
+    expect(result.error).toBe(messages.CSV_IMPORT_ERROR)
+  })
+
+  it('handles CSV with only header row', () => {
+    const csvContent = 'datetime,brewingVessel,teaName,teaProducer,origin,purchaseLocation,dryLeaf,wetLeaf,additionalNotes'
+
+    const result = importFromCSV(csvContent)
+
+    expect(result.sessions).toBeUndefined()
+    expect(result.error).toBe(messages.CSV_IMPORT_ERROR)
+  })
+
+  it('filters out empty steeps and custom fields during import', () => {
+    const header = 'datetime,brewingVessel,teaName,teaProducer,origin,purchaseLocation,dryLeaf,wetLeaf,additionalNotes,steep-1,steep-2,steep-3,custom-water-temperature,custom-rating,custom-empty-field'
+    const data1 = '2024-01-01T10:00,Gaiwan,Dragon Well,Tea Company A,China,Local Tea Shop,Green flat leaves,Bright green expanded,Very refreshing,Wash,Fruity,Floral,80°C,9/10,'
+    const data2 = '2024-01-02T14:30,Yixing Zisha Zhuni Shuiping 100ml,N/A,XiaGuan,Menghai - Yunnan,Essence of Tea,Dark twisted leaves,Dark brown,Too smoky?,some value here,another value here,,100°C,8/10'
+    const csvContent = `${header}\n${data1}\n${data2}`
+
+    const result = importFromCSV(csvContent)
+
+    const expectedSessions: Session[] = [
+      {
+        datetime: '2024-01-01T10:00',
+        brewingVessel: 'Gaiwan',
+        teaName: 'Dragon Well',
+        teaProducer: 'Tea Company A',
+        origin: 'China',
+        purchaseLocation: 'Local Tea Shop',
+        dryLeaf: 'Green flat leaves',
+        wetLeaf: 'Bright green expanded',
+        additionalNotes: 'Very refreshing',
+        steeps: [
+          'Wash',
+          'Fruity',
+          'Floral'
+        ],
+        customFields: [
+          {
+            name: 'custom-water-temperature',
+            value: '80°C'
+          },
+          {
+            name: 'custom-rating',
+            value: '9/10'
+          }
+        ]
+      },
+      {
+        datetime: '2024-01-02T14:30',
+        brewingVessel: 'Yixing Zisha Zhuni Shuiping 100ml',
+        teaName: 'N/A',
+        teaProducer: 'XiaGuan',
+        origin: 'Menghai - Yunnan',
+        purchaseLocation: 'Essence of Tea',
+        dryLeaf: 'Dark twisted leaves',
+        wetLeaf: 'Dark brown',
+        additionalNotes: 'Too smoky?',
+        steeps: [
+          'some value here',
+          'another value here'
+          // empty steep-3 filtered out
+        ],
+        customFields: [
+          {
+            name: 'custom-water-temperature',
+            value: '100°C'
+          },
+          {
+            name: 'custom-rating',
+            value: '8/10'
+          }
+        ]
+      }
+    ]
+
+    expect(result.sessions).toEqual(expectedSessions)
+    expect(result.error).toBeUndefined()
   })
 })

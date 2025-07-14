@@ -52,6 +52,10 @@ textarea {
   background-color: transparent;
 }
 
+input[type="file"] {
+  display: none;
+}
+
 header,
 main {
   max-width: 46rem;
@@ -184,7 +188,8 @@ main {
 }
 
 .past-sessions,
-.export {
+.export,
+.import {
   border-top: 1px solid var(--grey-accent);
   padding-top: 0.5rem;
 }
@@ -208,4 +213,27 @@ main {
 .session-actions button {
   margin: 0;
   padding: 0;
+}
+
+.file-input-label {
+  display: inline-block;
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: 1px solid transparent;
+  padding: 0.5rem 1rem;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.file-input-label:hover {
+  background-color: var(--primary-color-light);
+}
+
+.file-input-label:first-of-type {
+  width: 65px;
+}
+
+.file-input-label:nth-of-type(2) {
+  width: 75px;
 }

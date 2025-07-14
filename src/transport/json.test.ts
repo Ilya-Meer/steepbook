@@ -5,12 +5,25 @@ import {
   vi,
   beforeEach
 } from 'vitest'
-import type { Session } from '../types'
 import { downloadFile } from '../util'
-import { exportToJSON } from './json'
+import type { Session } from '../types'
+import {
+  exportToJSON,
+  importFromJSON
+} from './json'
 
-vi.mock('../util', () => ({ downloadFile: vi.fn() }))
-vi.mock('../notification', () => ({}))
+vi.mock('../util', async (importOriginal) => ({
+  ...(await importOriginal()),
+  downloadFile: vi.fn(),
+}))
+
+vi.mock('../notification', () => ({
+  messages: {
+    JSON_IMPORT_ERROR: 'JSON_IMPORT_ERROR',
+    JSON_IMPORT_ERROR_PARTIAL: 'JSON_IMPORT_ERROR_PARTIAL',
+    JSON_EXPORT_ERROR: 'JSON_EXPORT_ERROR',
+  }
+}))
 vi.mock('../state', () => ({
   state: {
     sessions: []
@@ -18,6 +31,74 @@ vi.mock('../state', () => ({
 }))
 
 import { state } from '../state'
+import { messages } from '../notification'
+
+// Mock state with test data containing steeps and custom fields
+const mockSessions: Session[] = [
+  {
+    datetime: '2024-01-01T10:00',
+    brewingVessel: 'Gaiwan',
+    teaName: '7542',
+    teaProducer: 'Dayi',
+    origin: 'Menghai Yunnan',
+    purchaseLocation: 'Local Tea Shop',
+    dryLeaf: 'Dark brown; slightly sweet aroma',
+    wetLeaf: 'Leather and tobacco',
+    additionalNotes: 'Very refreshing',
+    steeps: [
+      'Wash',
+      'Fruity',
+      'Floral',
+      '' // Include empty steep to test filtering
+    ],
+    customFields: [
+      {
+        name: 'Water Temperature',
+        value: '100'
+      },
+      {
+        name: 'Rating',
+        value: '9/10'
+      },
+      {
+        // Test filtering empty custom fields
+        name: 'Empty Field',
+        value: ''
+      }
+    ]
+  },
+  {
+    datetime: '2024-01-02T14:30',
+    brewingVessel: 'Yixing Zisha Zhuni Shuiping 100ml',
+    teaName: 'N/A',
+    teaProducer: 'XiaGuan',
+    origin: 'Menghai - Yunnan',
+    purchaseLocation: 'Essence of Tea',
+    dryLeaf: 'Dark twisted leaves',
+    wetLeaf: 'Dark brown',
+    additionalNotes: 'Too smoky?',
+    // Different number of steeps
+    steeps: [
+      'some value here',
+      'another value here'
+    ],
+    customFields: [
+      {
+        name: 'Water Temperature',
+        value: '100°C'
+      },
+      {
+        // Different custom field
+        name: 'Tea Pet',
+        value: 'Lord GuanYu'
+      },
+      {
+        name: 'Rating',
+        value: '8/10'
+      }
+    ]
+  }
+]
 
 describe('Export to JSON', () => {
   beforeEach(() => {
@@ -25,72 +106,6 @@ describe('Export to JSON', () => {
   })
 
   it('calls downloadFile with correctly formatted parameters', () => {
-    // Mock state with test data containing steeps and custom fields
-    const mockSessions: Session[] = [
-      {
-        datetime: '2024-01-01T10:00:00Z',
-        brewingVessel: 'Gaiwan',
-        teaName: '7542',
-        teaProducer: 'Dayi',
-        origin: 'Menghai Yunnan',
-        purchaseLocation: 'Local Tea Shop',
-        dryLeaf: 'Dark brown; slightly sweet aroma',
-        wetLeaf: 'Leather and tobacco',
-        additionalNotes: 'Very refreshing',
-        steeps: [
-          'Wash',
-          'Fruity',
-          'Floral',
-          '' // Include empty steep to test filtering
-        ],
-        customFields: [
-          {
-            name: 'Water Temperature',
-            value: '100'
-          },
-          {
-            name: 'Rating',
-            value: '9/10'
-          },
-          {
-            // Test filtering empty custom fields
-            name: 'Empty Field',
-            value: ''
-          }
-        ]
-      },
-      {
-        datetime: '2024-01-02T14:30:00Z',
-        brewingVessel: 'Yixing Zisha Zhuni Shuiping 100ml',
-        teaName: 'N/A',
-        teaProducer: 'XiaGuan',
-        origin: 'Menghai - Yunnan',
-        purchaseLocation: 'Essence of Tea',
-        dryLeaf: 'Dark twisted leaves',
-        wetLeaf: 'Dark brown',
-        additionalNotes: 'Too smoky?',
-        // Different number of steeps
-        steeps: [
-          'some value here',
-          'another value here'
-        ],
-        customFields: [
-          {
-            name: 'Water Temperature',
-            value: '100°C'
-          },
-          {
-            // Different custom field
-            name: 'Tea Pet',
-            value: 'Lord GuanYu'
-          },
-          {
-            name: 'Rating',
-            value: '8/10'
-          }
-        ]
-      }
-    ]
 
     vi.mocked(state).sessions = mockSessions
 
@@ -112,7 +127,7 @@ describe('Export to JSON', () => {
 
     // Verify first session data
     const firstSession = jsonContent[0]
-    expect(firstSession.datetime).toBe('2024-01-01T10:00:00Z')
+    expect(firstSession.datetime).toBe('2024-01-01T10:00')
     expect(firstSession.brewingVessel).toBe('Gaiwan')
     expect(firstSession.teaName).toBe('7542')
     expect(firstSession.teaProducer).toBe('Dayi')
@@ -149,7 +164,7 @@ describe('Export to JSON', () => {
 
     // Verify second session data
     const secondSession = jsonContent[1]
-    expect(secondSession.datetime).toBe('2024-01-02T14:30:00Z')
+    expect(secondSession.datetime).toBe('2024-01-02T14:30')
     expect(secondSession.brewingVessel).toBe('Yixing Zisha Zhuni Shuiping 100ml')
     expect(secondSession.teaName).toBe('N/A')
     expect(secondSession.teaProducer).toBe('XiaGuan')
@@ -204,7 +219,7 @@ describe('Export to JSON', () => {
   it('handles sessions with no steeps or custom fields', () => {
     const mockSessions: Session[] = [
       {
-        datetime: '2024-01-01T10:00:00Z',
+        datetime: '2024-01-01T10:00',
         brewingVessel: 'Gaiwan',
         teaName: 'Dragon Well',
         teaProducer: 'Tea Company A',
@@ -236,7 +251,7 @@ describe('Export to JSON', () => {
   it('handles sessions with only empty steeps and custom fields', () => {
     const mockSessions: Session[] = [
       {
-        datetime: '2024-01-01T10:00:00Z',
+        datetime: '2024-01-01T10:00',
         brewingVessel: 'Gaiwan',
         teaName: 'Dragon Well',
         teaProducer: 'Tea Company A',
@@ -282,7 +297,7 @@ describe('Export to JSON', () => {
   it('preserves mixed empty and non-empty values correctly', () => {
     const mockSessions: Session[] = [
       {
-        datetime: '2024-01-01T10:00:00Z',
+        datetime: '2024-01-01T10:00',
         brewingVessel: 'Gaiwan',
         teaName: 'Dragon Well',
         teaProducer: 'Tea Company A',
@@ -349,7 +364,74 @@ describe('Export to JSON', () => {
 })
 
 describe('Import from JSON', () => {
-  it.skip('is not implemented yet', () => {
-    // Placeholder for future implementation
+  it('imports well-formatted sessions from JSON', () => {
+    const mockJSON = JSON.stringify(mockSessions)
+    const result = importFromJSON(mockJSON)
+
+    const withoutEmptySteepsAndFields = mockSessions.map(session => ({
+      ...session,
+      steeps: session.steeps.filter(steep => steep.length > 0),
+      customFields: session.customFields.filter(field => field.value.length > 0)
+    }))
+
+    expect(result.sessions).toEqual(withoutEmptySteepsAndFields)
+    expect(result.error).toBeUndefined()
+  })
+
+  it('does not import sessions with invalid datetime', () => {
+    const invalidSessions: Session[] = [
+      {
+        datetime: 'not-a-date',
+        brewingVessel: 'Gaiwan',
+        teaName: 'Test Tea',
+        teaProducer: 'Test Producer',
+        origin: 'Test Origin',
+        purchaseLocation: 'Test Location',
+        dryLeaf: 'Test dry leaf notes',
+        wetLeaf: 'Test wet leaf notes',
+        additionalNotes: 'Test notes',
+        steeps: [],
+        customFields: []
+      }
+    ]
+
+    const result = importFromJSON(JSON.stringify(invalidSessions))
+
+    expect(result.sessions).toBeUndefined()
+    expect(result.error).toBe(messages.JSON_IMPORT_ERROR)
+  })
+
+  it('keeps sessions with valid datetime', () => {
+    const validSession: Session = {
+      datetime: '2024-01-01T10:00',
+      brewingVessel: 'Gaiwan',
+      teaName: 'Test Tea',
+      teaProducer: 'Test Producer',
+      origin: 'Test Origin',
+      purchaseLocation: 'Test Location',
+      dryLeaf: 'Test dry leaf notes',
+      wetLeaf: 'Test wet leaf notes',
+      additionalNotes: 'Test notes',
+      steeps: [],
+      customFields: []
+    }
+    const invalidSession: Session = {
+      datetime: 'not-a-date',
+      brewingVessel: 'Gaiwan',
+      teaName: 'Test Tea',
+      teaProducer: 'Test Producer',
+      origin: 'Test Origin',
+      purchaseLocation: 'Test Location',
+      steeps: [],
+      customFields: []
+    }
+
+    const result = importFromJSON(JSON.stringify([
+      validSession,
+      invalidSession
+    ]))
+
+    expect(result.sessions).toEqual([validSession])
+    expect(result.error).toEqual(messages.JSON_IMPORT_ERROR_PARTIAL)
   })
 })

@@ -17,5 +17,8 @@ export const refs = {
   failureMessageContainer: document.getElementById('failure-message-container'),
 
   csvExportButton: document.getElementById('csv-export-button'),
-  jsonExportButton: document.getElementById('json-export-button')
+  jsonExportButton: document.getElementById('json-export-button'),
+
+  csvImportInputLabel: document.getElementById('csv-import'),
+  jsonImportInputLabel: document.getElementById('json-import')
 }

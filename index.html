@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Steepbook</title>
 </head>
+
 <body>
   <header>
     <h1>Steepbook</h1>
@@ -98,6 +100,17 @@
       <h2>Export</h2>
       <button id="csv-export-button" class="button-primary">CSV</button>
       <button id="json-export-button" class="button-primary">JSON</button>
+    </div>
+    <div class="import">
+      <h2>Import</h2>
+      <label for="csv-import" class="file-input-label">
+        CSV
+      </label>
+      <input id="csv-import" type="file" accept="text/csv,.csv" />
+      <label for="json-import" class="file-input-label">
+        JSON
+      </label>
+      <input id="json-import" type="file" accept="application/json,.json" />
     </div>
   </main>
   <script type="module" src="/src/main.ts"></script>
