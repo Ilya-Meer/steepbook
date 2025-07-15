@@ -96,23 +96,50 @@
       <h2>Past Sessions</h2>
       <div id="session-list" class="session-list"></div>
     </div>
-    <div class="export">
-      <h2>Export</h2>
-      <button id="csv-export-button" class="button-primary">CSV</button>
-      <button id="json-export-button" class="button-primary">JSON</button>
+    <div class="guiding-questions">
+      <h2>Guiding Questions</h2>
+      <ul>
+        <li>What flavours do you taste? On what parts of your tongue?</li>
+        <li>What aromas do you detect? Do quick, sharp sniffs vs long, slow sniffs make a difference?</li>
+        <li>What physical sensations do you feel in your mouth? Does the tea dry your mouth out or make you salivate? Is there a noticeable aftertaste?</li>
+        <li>What do you experience when breathing out through your nose?</li>
+        <li>What physical sensations do you feel in your throat? Is the tea liquor thin and quick to disappear or does it linger in your mouth/throat?</li>
+        <li>Are you seeing a trajectory develop during the session? Are some flavours/sensations receding, changing, or becoming more dominant?</li>
+        <li>If you've brewed this tea differently before, how do different brewing methods/vessels affect the session?</li>
+        <li>How does this tea compare with other teas you've tried in terms of age, storage, processing? What effect do these things have on the session?</li>
+        <li>How does the tea make you feel? What physical sensations are you experiencing i.e. tingling, hot flashes, etc.</li>
+        <li>Do you feel any change in the quality of your thoughts? Are you becoming more talkative or more withdrawn? Does the tea prompt any specific memories? If drinking with others, do they feel the same?</li>
+      </ul>
     </div>
-    <div class="import">
-      <h2>Import</h2>
-      <label for="csv-import" class="file-input-label">
-        CSV
-      </label>
-      <input id="csv-import" type="file" accept="text/csv,.csv" />
-      <label for="json-import" class="file-input-label">
-        JSON
-      </label>
-      <input id="json-import" type="file" accept="application/json,.json" />
+    <div class="admin">
+      <h2>Admin</h2>
+      <div class="export">
+        <h3>Export</h3>
+        <button id="csv-export-button" class="button-primary">CSV</button>
+        <button id="json-export-button" class="button-primary">JSON</button>
+      </div>
+      <div class="import">
+        <h3>Import</h3>
+        <label for="csv-import" class="file-input-label">
+          CSV
+        </label>
+        <input id="csv-import" type="file" accept="text/csv,.csv" />
+        <label for="json-import" class="file-input-label">
+          JSON
+        </label>
+        <input id="json-import" type="file" accept="application/json,.json" />
+      </div>
     </div>
   </main>
+    <footer>
+      <div>
+        <p>
+          <span>Steepbook 记</span>
+          <span>|</span>
+          <span>Made with ❤️ in Canada</span>
+        </p>
+      </div>
+    </footer>
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>

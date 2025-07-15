@@ -73,6 +73,24 @@ main {
   padding: 2rem;
 }
 
+footer {
+  text-align: center;
+  padding: 1rem;
+  background-color: var(--primary-color-light);
+  border-top: 1px solid var(--grey-accent);
+}
+
+footer div {
+  max-width: 46rem;
+  margin: 0 auto;
+  color: var(--primary-color);
+}
+
+footer span {
+  margin: 0 0.5rem;
+  color: var(--secondary-color);
+}
+
 .button-primary {
   background-color: var(--primary-color);
   color: var(--white);
@@ -188,8 +206,8 @@ main {
 }
 
 .past-sessions,
-.export,
-.import {
+.guiding-questions,
+.admin {
   border-top: 1px solid var(--grey-accent);
   padding-top: 0.5rem;
 }
@@ -210,9 +228,34 @@ main {
   gap: 0.5rem;
   padding-top: 1rem;
 }
+
 .session-actions button {
   margin: 0;
   padding: 0;
+}
+
+.guiding-questions ul {
+  list-style: none;
+  padding: 10px;
+}
+
+.guiding-questions li {
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+}
+.guiding-questions li::marker {
+  content: "▶";
+  font-size: 10px;
+}
+
+.export,
+.import {
+  margin-top: 1rem;
+}
+
+.export h3,
+.import h3 {
+  font-size: 1rem;
 }
 
 .file-input-label {
