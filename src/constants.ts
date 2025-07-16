@@ -4,6 +4,7 @@ export const staticFields = [
   'teaName',
   'teaProducer',
   'origin',
+  'year',
   'purchaseLocation',
   'dryLeaf',
   'wetLeaf',

@@ -2,7 +2,8 @@ import { refs } from './refs'
 import { state } from './state'
 import {
   isInput,
-  isTextArea
+  isTextArea,
+  returnValueWithDefault
 } from './util'
 import { type Session } from './types'
 import {
@@ -31,6 +32,7 @@ export function saveSession(e: SubmitEvent) {
     teaName: formData.get('teaName') as string,
     teaProducer: formData.get('teaProducer') as string,
     origin: formData.get('origin') as string,
+    year: formData.get('year') as string,
     purchaseLocation: formData.get('purchaseLocation') as string,
     dryLeaf: formData.get('dryLeaf') as string,
     wetLeaf: formData.get('wetLeaf') as string,
@@ -176,29 +178,32 @@ function renderSessionCard(session: Session, index: number) {
   })}`
   sessionDateTime.innerHTML = `<strong>Date & Time:</strong> ${formattedDateTime}`
 
-  const brewingVessel = document.createElement('p')
-  brewingVessel.innerHTML = `<strong>Brewing Vessel:</strong> ${session.brewingVessel}`
-
   const teaName = document.createElement('p')
   teaName.innerHTML = `<strong>Tea Name:</strong> ${session.teaName}`
 
+  const brewingVessel = document.createElement('p')
+  brewingVessel.innerHTML = `<strong>Brewing Vessel:</strong> ${returnValueWithDefault(session.brewingVessel)}`
+
   const producer = document.createElement('p')
-  producer.innerHTML = `<strong>Producer:</strong> ${session.teaProducer}`
+  producer.innerHTML = `<strong>Producer:</strong> ${returnValueWithDefault(session.teaProducer)}`
 
   const origin = document.createElement('p')
-  origin.innerHTML = `<strong>Origin:</strong> ${session.origin}`
+  origin.innerHTML = `<strong>Origin:</strong> ${returnValueWithDefault(session.origin)}`
+
+  const year = document.createElement('p')
+  year.innerHTML = `<strong>Year:</strong> ${returnValueWithDefault(session.year)}`
 
   const purchaseLocation = document.createElement('p')
-  purchaseLocation.innerHTML = `<strong>Purchase Location:</strong> ${session.purchaseLocation}`
+  purchaseLocation.innerHTML = `<strong>Purchase Location:</strong> ${returnValueWithDefault(session.purchaseLocation)}`
 
   const dryLeaf = document.createElement('p')
-  dryLeaf.innerHTML = `<strong>Dry Leaf:</strong> ${session.dryLeaf}`
+  dryLeaf.innerHTML = `<strong>Dry Leaf:</strong> ${returnValueWithDefault(session.dryLeaf)}`
 
   const wetLeaf = document.createElement('p')
-  wetLeaf.innerHTML = `<strong>Wet Leaf:</strong> ${session.wetLeaf}`
+  wetLeaf.innerHTML = `<strong>Wet Leaf:</strong> ${returnValueWithDefault(session.wetLeaf)}`
 
   const additionalNotes = document.createElement('p')
-  additionalNotes.innerHTML = `<strong>Additional Notes:</strong> ${session.additionalNotes}`
+  additionalNotes.innerHTML = `<strong>Additional Notes:</strong> ${returnValueWithDefault(session.additionalNotes)}`
 
   const steeps = document.createElement('div')
   steeps.className = 'steeps'
@@ -247,6 +252,7 @@ function renderSessionCard(session: Session, index: number) {
   sessionDetails.appendChild(teaName)
   sessionDetails.appendChild(producer)
   sessionDetails.appendChild(origin)
+  sessionDetails.appendChild(year)
   sessionDetails.appendChild(purchaseLocation)
   sessionDetails.appendChild(brewingVessel)
   sessionDetails.appendChild(dryLeaf)
@@ -283,6 +289,10 @@ function startEditSession(index: number) {
     [
       'origin',
       session.origin
+    ],
+    [
+      'year',
+      session.year
     ],
     [
       'purchaseLocation',

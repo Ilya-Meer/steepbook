@@ -131,6 +131,15 @@ export function importFromCSV(csv: string): {
         }
       }
 
+      // if any of the static fields are missing from the columns,
+      // we're dealing with an older version of the CSV format,
+      // so we'll just set the value of the field to empty string
+      for (const staticField of staticFields) {
+        if (!columns.includes(staticField)) {
+          session[staticField] = ''
+        }
+      }
+
       if (!session.datetime || isNaN(new Date(session.datetime).getTime())) {
         console.error('Invalid session format: datetime field missing or invalid')
         return {

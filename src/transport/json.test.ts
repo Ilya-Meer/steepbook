@@ -41,6 +41,7 @@ const mockSessions: Session[] = [
     teaName: '7542',
     teaProducer: 'Dayi',
     origin: 'Menghai Yunnan',
+    year: '2005',
     purchaseLocation: 'Local Tea Shop',
     dryLeaf: 'Dark brown; slightly sweet aroma',
     wetLeaf: 'Leather and tobacco',
@@ -73,6 +74,7 @@ const mockSessions: Session[] = [
     teaName: 'N/A',
     teaProducer: 'XiaGuan',
     origin: 'Menghai - Yunnan',
+    year: '2005',
     purchaseLocation: 'Essence of Tea',
     dryLeaf: 'Dark twisted leaves',
     wetLeaf: 'Dark brown',
@@ -132,6 +134,7 @@ describe('Export to JSON', () => {
     expect(firstSession.teaName).toBe('7542')
     expect(firstSession.teaProducer).toBe('Dayi')
     expect(firstSession.origin).toBe('Menghai Yunnan')
+    expect(firstSession.year).toBe('2005')
     expect(firstSession.purchaseLocation).toBe('Local Tea Shop')
     expect(firstSession.dryLeaf).toBe('Dark brown; slightly sweet aroma')
     expect(firstSession.wetLeaf).toBe('Leather and tobacco')
@@ -169,6 +172,7 @@ describe('Export to JSON', () => {
     expect(secondSession.teaName).toBe('N/A')
     expect(secondSession.teaProducer).toBe('XiaGuan')
     expect(secondSession.origin).toBe('Menghai - Yunnan')
+    expect(secondSession.year).toBe('2005')
     expect(secondSession.purchaseLocation).toBe('Essence of Tea')
     expect(secondSession.dryLeaf).toBe('Dark twisted leaves')
     expect(secondSession.wetLeaf).toBe('Dark brown')
@@ -224,6 +228,7 @@ describe('Export to JSON', () => {
         teaName: 'Dragon Well',
         teaProducer: 'Tea Company A',
         origin: 'China',
+        year: '2005',
         purchaseLocation: 'Local Tea Shop',
         dryLeaf: 'Green, flat leaves, grassy aroma',
         wetLeaf: 'Even grassier',
@@ -256,6 +261,7 @@ describe('Export to JSON', () => {
         teaName: 'Dragon Well',
         teaProducer: 'Tea Company A',
         origin: 'China',
+        year: '2005',
         purchaseLocation: 'Local Tea Shop',
         dryLeaf: 'Green, flat leaves',
         wetLeaf: 'Bright green, expanded',
@@ -302,6 +308,7 @@ describe('Export to JSON', () => {
         teaName: 'Dragon Well',
         teaProducer: 'Tea Company A',
         origin: 'China',
+        year: '2005',
         purchaseLocation: 'Local Tea Shop',
         dryLeaf: 'Green, flat leaves',
         wetLeaf: 'Bright green, expanded',
@@ -386,6 +393,7 @@ describe('Import from JSON', () => {
         teaName: 'Test Tea',
         teaProducer: 'Test Producer',
         origin: 'Test Origin',
+        year: '2005',
         purchaseLocation: 'Test Location',
         dryLeaf: 'Test dry leaf notes',
         wetLeaf: 'Test wet leaf notes',
@@ -401,6 +409,31 @@ describe('Import from JSON', () => {
     expect(result.error).toBe(messages.JSON_IMPORT_ERROR)
   })
 
+  it('initializes missing fields to empty string if static fields are missing', () => {
+    const partialSession = {
+      datetime: '2024-01-01T10:00',
+      teaName: 'Test Tea',
+    }
+    const result = importFromJSON(JSON.stringify([partialSession]))
+
+    expect(result.sessions).toEqual([
+      {
+        ...partialSession,
+        year: '',
+        teaProducer: '',
+        brewingVessel: '',
+        origin: '',
+        purchaseLocation: '',
+        dryLeaf: '',
+        wetLeaf: '',
+        additionalNotes: '',
+        steeps: [],
+        customFields: []
+      }
+    ])
+    expect(result.error).toBeUndefined()
+  })
+
   it('keeps sessions with valid datetime', () => {
     const validSession: Session = {
       datetime: '2024-01-01T10:00',
@@ -408,6 +441,7 @@ describe('Import from JSON', () => {
       teaName: 'Test Tea',
       teaProducer: 'Test Producer',
       origin: 'Test Origin',
+      year: '2005',
       purchaseLocation: 'Test Location',
       dryLeaf: 'Test dry leaf notes',
       wetLeaf: 'Test wet leaf notes',
@@ -421,6 +455,7 @@ describe('Import from JSON', () => {
       teaName: 'Test Tea',
       teaProducer: 'Test Producer',
       origin: 'Test Origin',
+      year: '2005',
       purchaseLocation: 'Test Location',
       steeps: [],
       customFields: []

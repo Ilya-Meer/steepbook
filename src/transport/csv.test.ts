@@ -43,6 +43,7 @@ describe('Export to CSV', () => {
         teaName: '7542',
         teaProducer: 'Dayi',
         origin: 'Menghai Yunnan',
+        year: '2005',
         purchaseLocation: 'Local Tea Shop',
         dryLeaf: 'Dark brown; slightly sweet aroma',
         wetLeaf: 'Leather and tobacco',
@@ -74,6 +75,7 @@ describe('Export to CSV', () => {
         teaName: 'N/A',
         teaProducer: 'XiaGuan',
         origin: 'Menghai - Yunnan',
+        year: '2005',
         purchaseLocation: 'Essence of Tea',
         dryLeaf: 'Dark twisted leaves',
         wetLeaf: 'Dark brown',
@@ -130,6 +132,7 @@ describe('Export to CSV', () => {
     expect(headerRow).toContain('teaName')
     expect(headerRow).toContain('teaProducer')
     expect(headerRow).toContain('origin')
+    expect(headerRow).toContain('year')
     expect(headerRow).toContain('purchaseLocation')
     expect(headerRow).toContain('dryLeaf')
     expect(headerRow).toContain('wetLeaf')
@@ -217,6 +220,7 @@ describe('Export to CSV', () => {
         teaName: 'Dragon Well',
         teaProducer: 'Tea Company A',
         origin: 'China',
+        year: '2005',
         purchaseLocation: 'Local Tea Shop',
         dryLeaf: 'Green, flat leaves, grassy aroma',
         wetLeaf: 'Even grassier',
@@ -252,6 +256,7 @@ describe('Import from CSV', () => {
         teaName: '7542',
         teaProducer: 'Dayi',
         origin: 'Menghai Yunnan',
+        year: '2005',
         purchaseLocation: 'Local Tea Shop',
         dryLeaf: 'Dark brown, slightly sweet aroma',
         wetLeaf: 'Leather and tobacco',
@@ -278,6 +283,7 @@ describe('Import from CSV', () => {
         teaName: 'N/A',
         teaProducer: 'XiaGuan',
         origin: 'Menghai - Yunnan',
+        year: '2005',
         purchaseLocation: 'Essence of Tea',
         dryLeaf: 'Dark twisted leaves',
         wetLeaf: 'Dark brown',
@@ -304,9 +310,9 @@ describe('Import from CSV', () => {
     ]
 
     // Create CSV string that matches the expected format
-    const csvHeader = 'datetime,brewingVessel,teaName,teaProducer,origin,purchaseLocation,dryLeaf,wetLeaf,additionalNotes,steep-1,steep-2,steep-3,custom-water-temperature,custom-rating,custom-tea-pet'
-    const csvRow1 = '2024-01-01T10:00,Gaiwan,7542,Dayi,Menghai Yunnan,Local Tea Shop,"Dark brown, slightly sweet aroma",Leather and tobacco,Very refreshing,Wash,Fruity,Floral,100,9/10,'
-    const csvRow2 = '2024-01-02T14:30,Yixing Zisha Zhuni Shuiping 100ml,N/A,XiaGuan,Menghai - Yunnan,Essence of Tea,Dark twisted leaves,Dark brown,Too smoky?,some value here,another value here,,100°C,8/10,Lord GuanYu'
+    const csvHeader = 'datetime,brewingVessel,teaName,teaProducer,origin,year,purchaseLocation,dryLeaf,wetLeaf,additionalNotes,steep-1,steep-2,steep-3,custom-water-temperature,custom-rating,custom-tea-pet'
+    const csvRow1 = '2024-01-01T10:00,Gaiwan,7542,Dayi,Menghai Yunnan,2005,Local Tea Shop,"Dark brown, slightly sweet aroma",Leather and tobacco,Very refreshing,Wash,Fruity,Floral,100,9/10,'
+    const csvRow2 = '2024-01-02T14:30,Yixing Zisha Zhuni Shuiping 100ml,N/A,XiaGuan,Menghai - Yunnan,2005,Essence of Tea,Dark twisted leaves,Dark brown,Too smoky?,some value here,another value here,,100°C,8/10,Lord GuanYu'
     const mockCSV = `${csvHeader}\n${csvRow1}\n${csvRow2}`
 
     const result = importFromCSV(mockCSV)
@@ -323,8 +329,8 @@ describe('Import from CSV', () => {
   })
 
   it('does not import sessions with invalid datetime', () => {
-    const header = 'datetime,brewingVessel,teaName,teaProducer,origin,purchaseLocation,dryLeaf,wetLeaf,additionalNotes'
-    const data = 'not-a-date,Gaiwan,Test Tea,Test Producer,Test Origin,Test Location,Test dry leaf notes,Test wet leaf notes,Test notes'
+    const header = 'datetime,brewingVessel,teaName,teaProducer,origin,year,purchaseLocation,dryLeaf,wetLeaf,additionalNotes'
+    const data = 'not-a-date,Gaiwan,Test Tea,Test Producer,Test Origin,2005,Test Location,Test dry leaf notes,Test wet leaf notes,Test notes'
     const csvContent = `${header}\n${data}`
 
     const result = importFromCSV(csvContent)
@@ -334,10 +340,10 @@ describe('Import from CSV', () => {
   })
 
   it('keeps sessions with valid datetime', () => {
-    const validSessionCSV = '2024-01-01T10:00,Gaiwan,Test Tea,Test Producer,Test Origin,Test Location,Test dry leaf notes,Test wet leaf notes,Test notes'
-    const invalidSessionCSV = 'not-a-date,Gaiwan,Test Tea,Test Producer,Test Origin,Test Location,,,'
+    const validSessionCSV = '2024-01-01T10:00,Gaiwan,Test Tea,Test Producer,Test Origin,2005,Test Location,Test dry leaf notes,Test wet leaf notes,Test notes'
+    const invalidSessionCSV = 'not-a-date,Gaiwan,Test Tea,Test Producer,Test Origin,2005,Test Location,,,'
 
-    const csvContent = `datetime,brewingVessel,teaName,teaProducer,origin,purchaseLocation,dryLeaf,wetLeaf,additionalNotes\n${validSessionCSV}\n${invalidSessionCSV}`
+    const csvContent = `datetime,brewingVessel,teaName,teaProducer,origin,year,purchaseLocation,dryLeaf,wetLeaf,additionalNotes\n${validSessionCSV}\n${invalidSessionCSV}`
 
     const result = importFromCSV(csvContent)
 
@@ -347,6 +353,7 @@ describe('Import from CSV', () => {
       teaName: 'Test Tea',
       teaProducer: 'Test Producer',
       origin: 'Test Origin',
+      year: '2005',
       purchaseLocation: 'Test Location',
       dryLeaf: 'Test dry leaf notes',
       wetLeaf: 'Test wet leaf notes',
@@ -376,7 +383,7 @@ describe('Import from CSV', () => {
   })
 
   it('handles CSV with only header row', () => {
-    const csvContent = 'datetime,brewingVessel,teaName,teaProducer,origin,purchaseLocation,dryLeaf,wetLeaf,additionalNotes'
+    const csvContent = 'datetime,brewingVessel,teaName,teaProducer,origin,year,purchaseLocation,dryLeaf,wetLeaf,additionalNotes'
 
     const result = importFromCSV(csvContent)
 
@@ -384,10 +391,34 @@ describe('Import from CSV', () => {
     expect(result.error).toBe(messages.CSV_IMPORT_ERROR)
   })
 
+  it('initializes missing fields to empty string if static fields are missing', () => {
+    const headerWithMissingYearField = 'datetime,brewingVessel,teaName,teaProducer,origin,purchaseLocation,dryLeaf,wetLeaf,additionalNotes'
+    const data1 = '2024-01-01T10:00,Gaiwan,Dragon Well,Tea Company A,China,Local Tea Shop,Green flat leaves,Bright green expanded,Very refreshing'
+
+    const result = importFromCSV(`${headerWithMissingYearField}\n${data1}`)
+
+    expect(result.sessions).toEqual([
+      {
+        datetime: '2024-01-01T10:00',
+        brewingVessel: 'Gaiwan',
+        teaName: 'Dragon Well',
+        year: '', // missing year field initialized to empty string
+        teaProducer: 'Tea Company A',
+        origin: 'China',
+        purchaseLocation: 'Local Tea Shop',
+        dryLeaf: 'Green flat leaves',
+        wetLeaf: 'Bright green expanded',
+        additionalNotes: 'Very refreshing',
+        steeps: [],
+        customFields: []
+      }
+    ])
+  })
+
   it('filters out empty steeps and custom fields during import', () => {
-    const header = 'datetime,brewingVessel,teaName,teaProducer,origin,purchaseLocation,dryLeaf,wetLeaf,additionalNotes,steep-1,steep-2,steep-3,custom-water-temperature,custom-rating,custom-empty-field'
-    const data1 = '2024-01-01T10:00,Gaiwan,Dragon Well,Tea Company A,China,Local Tea Shop,Green flat leaves,Bright green expanded,Very refreshing,Wash,Fruity,Floral,80°C,9/10,'
-    const data2 = '2024-01-02T14:30,Yixing Zisha Zhuni Shuiping 100ml,N/A,XiaGuan,Menghai - Yunnan,Essence of Tea,Dark twisted leaves,Dark brown,Too smoky?,some value here,another value here,,100°C,8/10'
+    const header = 'datetime,brewingVessel,teaName,teaProducer,origin,year,purchaseLocation,dryLeaf,wetLeaf,additionalNotes,steep-1,steep-2,steep-3,custom-water-temperature,custom-rating,custom-empty-field'
+    const data1 = '2024-01-01T10:00,Gaiwan,Dragon Well,Tea Company A,China,2005,Local Tea Shop,Green flat leaves,Bright green expanded,Very refreshing,Wash,Fruity,Floral,80°C,9/10,'
+    const data2 = '2024-01-02T14:30,Yixing Zisha Zhuni Shuiping 100ml,N/A,XiaGuan,Menghai - Yunnan,2005,Essence of Tea,Dark twisted leaves,Dark brown,Too smoky?,some value here,another value here,,100°C,8/10'
     const csvContent = `${header}\n${data1}\n${data2}`
 
     const result = importFromCSV(csvContent)
@@ -399,6 +430,7 @@ describe('Import from CSV', () => {
         teaName: 'Dragon Well',
         teaProducer: 'Tea Company A',
         origin: 'China',
+        year: '2005',
         purchaseLocation: 'Local Tea Shop',
         dryLeaf: 'Green flat leaves',
         wetLeaf: 'Bright green expanded',
@@ -425,6 +457,7 @@ describe('Import from CSV', () => {
         teaName: 'N/A',
         teaProducer: 'XiaGuan',
         origin: 'Menghai - Yunnan',
+        year: '2005',
         purchaseLocation: 'Essence of Tea',
         dryLeaf: 'Dark twisted leaves',
         wetLeaf: 'Dark brown',

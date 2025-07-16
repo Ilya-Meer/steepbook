@@ -43,3 +43,7 @@ export function downloadFile({
 
   URL.revokeObjectURL(url) // Release memory
 }
+
+export function returnValueWithDefault(value: string | undefined) {
+  return value || ''
+}

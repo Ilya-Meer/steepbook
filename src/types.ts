@@ -8,6 +8,7 @@ export interface Session {
   brewingVessel?: string
   teaProducer?: string
   origin?: string
+  year?: string
   purchaseLocation?: string
   dryLeaf?: string
   wetLeaf?: string
