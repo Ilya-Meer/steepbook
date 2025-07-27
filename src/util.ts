@@ -10,11 +10,11 @@ export function toLocalDatetimeString(date: Date) {
   return `${yyyy}-${MM}-${dd}T${hh}:${mm}`
 }
 
-export function isInput(el: HTMLElement | null): el is HTMLInputElement {
+export function isInput(el: Element | null): el is HTMLInputElement {
   return el instanceof HTMLInputElement
 }
 
-export function isTextArea(el: HTMLElement | null): el is HTMLTextAreaElement {
+export function isTextArea(el: Element | null): el is HTMLTextAreaElement {
   return el instanceof HTMLTextAreaElement
 }
 

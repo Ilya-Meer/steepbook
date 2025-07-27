@@ -89,12 +89,16 @@ export function resetSessionForm() {
   resetBtn.textContent = 'Reset'
 
   form.querySelectorAll('input, select, textarea').forEach(el => {
-    if (el instanceof HTMLInputElement) {
+    if (isInput(el)) {
       if (el.type === 'checkbox' || el.type === 'radio') {
         el.checked = false
       } else {
         el.value = ''
       }
+    }
+
+    if (isTextArea(el)) {
+      el.value = ''
     }
   })
 
