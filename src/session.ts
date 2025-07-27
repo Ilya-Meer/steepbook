@@ -1,5 +1,6 @@
 import { refs } from './refs'
 import { state } from './state'
+import { staticFields } from './constants'
 import {
   isInput,
   isTextArea,
@@ -277,50 +278,12 @@ function startEditSession(index: number) {
   const session = state.sessions[index]
   state.editingIndex = index
 
-  const fields = [
-    [
-      'datetime',
-      session.datetime
-    ],
-    [
-      'teaName',
-      session.teaName
-    ],
-    [
-      'teaProducer',
-      session.teaProducer
-    ],
-    [
-      'origin',
-      session.origin
-    ],
-    [
-      'year',
-      session.year
-    ],
-    [
-      'purchaseLocation',
-      session.purchaseLocation
-    ],
-    [
-      'dryLeaf',
-      session.dryLeaf
-    ],
-    [
-      'wetLeaf',
-      session.wetLeaf
-    ],
-  ] as const
-
-  for (const [
-    name,
-    value
-  ] of fields) {
-    const el = form.elements.namedItem(name)
+  for (const field of staticFields) {
+    const el = form.elements.namedItem(field)
     if (isInput(el) || isTextArea(el)) {
-      el.value = value
+      el.value = session[field] || ''
     } else {
-      console.warn(`Expected input element for '${name}', but got:`, el)
+      console.warn(`Expected input element for '${field}', but got:`, el)
     }
   }
 
